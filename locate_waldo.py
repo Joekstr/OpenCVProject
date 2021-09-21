@@ -4,6 +4,7 @@ import imutils
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+from apply_mask import clicker
 
 #parse two arguments: a picture of the puzzle itself, and a reference picture of waldo
 ap = argparse.ArgumentParser()
