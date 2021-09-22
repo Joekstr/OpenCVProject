@@ -1,18 +1,25 @@
 import argparse
 import cv2
 import numpy as np
-
-def click_and_mask(event,x,y,flags,parameters):
-        if event == cv2.EVENT_LBUTTONDOWN:
-            mask = np.zeros(image.shape[:2], dtype = "uint8")
-            cv2.circle(mask,(x,y),150,255,-1)
-            masked = cv2.bitwise_and(image,image,mask = mask)
-            cv2.imshow("YOU DIDN'T FIND WALDO! PRESS R TO RETRY",masked)
-            masking = masked
+from locate_waldo_callable import locate
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to the image")
+ap.add_argument("-r", '--reference', required = True, help = "waldo ref pic")
 args = vars(ap.parse_args())
+ref = cv2.imread(args["reference"])
+
+def click_and_mask(event,x,y,flags,parameters):
+    global ref, clickstate
+    if event == cv2.EVENT_LBUTTONDOWN:
+        mask = np.zeros(image.shape[:2], dtype = "uint8")
+        cv2.circle(mask,(x,y),150,255,-1)
+        masked = cv2.bitwise_and(image,image,mask = mask)
+        locate(masked, ref)
+        if locate(masked, ref) == False:
+            cv2.imshow("YOU DIDN'T FIND WALDO! PRESS R TO RETRY",masked)
+
+
 # load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args["image"])
 clone = image.copy()
